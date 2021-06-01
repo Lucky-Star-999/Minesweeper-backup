@@ -85,7 +85,26 @@ var App_Operator_obj = (function () {
                     let id_query = "#" + i;
                     current_state[i] = $(id_query).attr("class");
                 }
-                this.history_states.push(current_state);
+
+                // If all the elements do not change, the state should not be updated
+                let fake_change = true;
+                if (this.history_states.length === 0) {
+                    fake_change = false;
+                    this.history_states.push(current_state);
+                } else {
+                    let old_state = this.history_states[this.history_states.length - 1];
+                    for (let i = 0; i < current_state.length; i++) {
+                        if (current_state[i] !== old_state[i]) {
+                            fake_change = false;
+                            break;
+                        }
+                    }
+                    if (fake_change) {
+
+                    } else {
+                        this.history_states.push(current_state);
+                    }
+                }
 
             },
             update_state_for_Square_class: function () {
@@ -400,20 +419,20 @@ var App_Operator_obj = (function () {
                 }
             },
 
-            
+
             expand_all_empty_squares: function (position_clicked) {
-                let queue_of_cells = [];                                                    // This is a queue
-                let cells_visited = [];                                                     // Keep track visited nodes
-                queue_of_cells.unshift(parseInt(position_clicked));                         // Unshift = enqueue
+                let queue_of_cells = []; // This is a queue
+                let cells_visited = []; // Keep track visited nodes
+                queue_of_cells.unshift(parseInt(position_clicked)); // Unshift = enqueue
 
-                while (queue_of_cells.length > 0) {                                         // Run until queue is empty
-                    let cell_visiting = queue_of_cells.shift();                             // Shift = dequeue
-                    cells_visited.push(cell_visiting);                                      // After visited, recored it
+                while (queue_of_cells.length > 0) { // Run until queue is empty
+                    let cell_visiting = queue_of_cells.shift(); // Shift = dequeue
+                    cells_visited.push(cell_visiting); // After visited, recored it
 
-                    let positions_around = this.get_3x3_around_position(cell_visiting);     // Get all neighbour nodes
-                    
+                    let positions_around = this.get_3x3_around_position(cell_visiting); // Get all neighbour nodes
+
                     // Record the nodes should be visited next time, as empty squares
-                    let positions_around_continue = [];                     
+                    let positions_around_continue = [];
                     for (let i = 0; i < positions_around.length; i++) {
                         this.show(positions_around[i]);
                         if ($("#" + positions_around[i]).attr("class").includes("number_0")) {
