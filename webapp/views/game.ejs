@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play!</title>
+    <link rel="stylesheet" href="../stylesheets/game.css">
+    <link rel="stylesheet" href="../stylesheets/modal.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <style>
+        .hoverable {
+            background-color: #29b6f6;
+            cursor: pointer;
+            border-radius: 0.5vw;
+            margin: 0.05vw;
+        }
+
+        .hoverable:hover {
+            background-color: greenyellow;
+        }
+
+        .first_click {
+            background-color: #29b6f6;
+            cursor: pointer;
+            border-radius: 0.5vw;
+            margin: 0.05vw;
+        }
+
+        .first_click:hover {
+            background-color: greenyellow;
+        }
+
+        .flag_on {
+            background-color: pink;
+            /*background-image: url('../images/flag.png');*/
+            background-image: url('../assets/Flag.svg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: contain;
+        }
+
+        .active.bomb {
+            /*border-radius: 5px;
+            margin: 2px;*/
+            border-radius: 0.5vw;
+            margin: 0.05vw;
+            /*background-image: url('../images/bomb.png');*/
+            background-image: url('../assets/Bomb.svg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: contain;
+        }
+
+        .active {
+            /*border-radius: 5px;
+            margin: 2px;*/
+            border-radius: 0.5vw;
+            margin: 0.05vw;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: contain;
+        }
+
+        .active.number_0 {
+            /*background-image: url('../images/Number_0.png');*/
+            background-image: url('../assets/0.svg');
+        }
+
+        .active.number_1 {
+            /*background-image: url('../images/Number_1.png');*/
+            background-image: url('../assets/1.svg');
+        }
+
+        .active.number_2 {
+            /*background-image: url('../images/Number_2.png');*/
+            background-image: url('../assets/2.svg');
+        }
+
+        .active.number_3 {
+            /*background-image: url('../images/Number_3.png');*/
+            background-image: url('../assets/3.svg');
+        }
+
+        .active.number_4 {
+            /*background-image: url('../images/Number_4.png');*/
+            background-image: url('../assets/4.svg');
+        }
+
+        .active.number_5 {
+            /*background-image: url('../images/Number_5.png');*/
+            background-image: url('../assets/5.svg');
+        }
+
+        .active.number_6 {
+            /*background-image: url('../images/Number_6.png');*/
+            background-image: url('../assets/6.svg');
+        }
+
+        .active.number_7 {
+            /*background-image: url('../images/Number_7.png');*/
+            background-image: url('../assets/7.svg');
+        }
+
+        .active.number_8 {
+            /*background-image: url('../images/Number_8.png');*/
+            background-image: url('../assets/8.svg');
+        }
+
+        .active.number_9 {
+            /*background-image: url('../images/Number_9.png');*/
+            background-image: url('../assets/9.svg');
+        }
+    </style>
+</head>
+
+<body onload="setInfo()">
+    <div id="big-container">
+        <!--Tiles///////////////////////////////////////////////-->
+        <div id="board-container" style="display:flex; align-items: center; justify-content: center;">
+            <!--<div id="tile-container">
+                <div class="tile">1</div>
+            </div>-->
+            <div id="grid" style="width:50vw; height: 30vw; background-color: green; overflow: auto; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <!--<div id="row-0"
+                    style="display:flex; flex-direction: row; align-items: center; justify-content: center;">
+
+                    <div class="hoverable" style="width: 2.5vw; height:2.5vw;" id="0"></div>
+                    <div class="hoverable" style="width: 2.5vw; height:2.5vw;" id="0"></div>
+                    <div class="hoverable" style="width: 2.5vw; height:2.5vw;" id="0"></div>
+                    <div class="hoverable" style="width: 2.5vw; height:2.5vw;" id="0"></div>
+                    <div class="hoverable" style="width: 2.5vw; height:2.5vw;" id="0"></div>
+                </div>-->
+
+
+            </div>
+        </div>
+        <!--Player info///////////////////////////////////////////////-->
+        <div id="game-info-container">
+            <div id="player-info-container">
+                <p id="info-title">Player info</p>
+                <div class="info-line">
+                    <p class="myLabel">Will score be published? </p>
+                    <p class="userInfo" id="does_need_to_publish"><%= is_need_publish_score %></p>
+                </div>
+                <div class="info-line">
+                    <p class="myLabel">Player name: </p>
+                    <p class="userInfo" id="final-playername"><%= name %></p>
+                </div>
+                <div class="info-line">
+                    <p class="myLabel">Board: </p>
+                    <p class="userInfo" id="final-boardsize">
+                        <span id="row_length"><%= number_of_squares_a_row %></span> x
+                        <span id="column_length"><%= number_of_squares_a_column %></span></p>
+                </div>
+                <div class="info-line">
+                    <p class="myLabel">No. of Bombs: </p>
+                    <p class="userInfo" id="final-numberofbombs"><%= number_of_bombs %></p>
+                </div>
+                <div class="info-line">
+                    <p class="myLabel">Time passed: </p>
+                    <p class="userInfo" id="final-time-elapsed">0</p>
+                </div>
+            </div>
+            <br>
+            <div id="buttons-container">
+                <button class="button" id="undo-button" onclick="App_Operator.undo()">Undo</button>
+                <button class="button" id="leaderboard-button" onclick="open_modal()">Leaderboard</button>
+                <button class="button" id="exit-button" onclick="exit()">Exit game</button>
+            </div>
+            <br>
+            <p style="color: #707070; font-size: 14px; line-height: 25px;">
+                <b>Left-click: </b>Open 1 square <br />
+                <b>Right-click: </b>Flag square <br />
+                <b>Middle-click: </b>Open 3x3 square <br />
+            </p>
+        </div>
+    </div>
+
+    <p style="color: black; font-size: 14px; line-height: 25px; text-align: center; margin-top: 10px;">
+        <b>Team members: </b><br />
+        <span>Hoàng Linh, Hoàng Long, Đức Minh, Quang Tùng</span>
+    </p>
+
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="close_modal()">&times;</span>
+                <h2>Leaderboard</h2>
+            </div>
+            <div class="modal-body">
+                <div class="search-container" style="margin-bottom: 20px; margin-top: 20px;">
+                    <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+                        <input id="search_field" placeholder="Search by name"
+                            style="padding: 10px; border-radius: 10px; width: 20%; margin-right: 10px;">
+                        <button class="button" style="margin-right: 100px;" onclick="search_by_name()">Search</button>
+                        <button class="button" style="margin-right: 10px;" onclick="sort_by_bombs()">Sort by
+                            Bombs</button>
+                        <button class="button" style="margin-right: 10px;" onclick="sort_by_date()">Sort by
+                            Date</button>
+                        <button class="button" style="margin-right: 10px;" onclick="sort_by_time()">Sort by
+                            Time</button>
+                    </div>
+                </div>
+
+                <div style="overflow: auto; height: 60vh;">
+                    <table id="leaderboard_table">
+                        <tr>
+                            <th>Player name</th>
+                            <th>Board dimension</th>
+                            <th>Number of bombs</th>
+                            <th>Date played</th>
+                            <th>Result</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!--<div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div>-->
+        </div>
+
+    </div>
+</body>
+
+<script src="../javascripts/Square.js"></script>
+<script src="../javascripts/main_code/App_Operator.js"></script>
+<script src="../javascripts/main_code/Board_Making.js"></script>
+<script src="../javascripts/modal.js"></script>
+<script src="../javascripts/game.js"></script>
+
+<script>
+    function setInfo() {
+
+    }
+
+    $('.hoverable').bind("contextmenu", function (e) {
+        return false;
+    });
+
+    $('#board-container').bind("contextmenu", function (e) {
+        return false;
+    });
+
+    //Remove the menu context
+    $('#board').bind("contextmenu", function (e) {
+        return false;
+    });
+
+    $('.hoverable').mousedown(function (event) {
+        switch (event.which) {
+            case 1:
+                try {
+                    if ($(".hoverable").attr("class").includes("first_click")) {
+
+                    } else {
+                        // Handle when first click
+                        if (App_Operator.game_state === "Waiting") {
+                            // Create the numbers behind the grid
+                            App_Operator.first_click_position = parseInt(this.id);
+                            Board_Making.get_board_from_api(this.id);
+
+                            // Set timer
+                            App_Operator.game_state = "Playing";
+                            time_counter();
+
+                            $(".hoverable").addClass("first_click");
+                            $(".hoverable").removeClass("hoverable");
+
+                        } else {
+                            App_Operator.more_than_second_click = true;
+                            App_Operator.show(this.id);
+
+                            let id_query = "#" + this.id;
+                            if($(id_query).attr("class").includes("number_0")){
+                                App_Operator.expand_all_empty_squares(this.id);
+                            }
+
+                            App_Operator.update_state();
+                            App_Operator.update_state_for_Square_class();
+        
+                        }
+
+                        if (App_Operator.is_lose()) {
+                            App_Operator.game_state = "Lose";
+                        }
+                        App_Operator.is_win();
+
+                        App_Operator.active_undo_button();
+                    }
+                } catch (err) {
+                    
+                }
+
+                break;
+            case 2:
+                event.preventDefault();
+
+                try {
+                    if ($(".hoverable").attr("class").includes("first_click")) {
+
+                    } else {
+                        // Handle when first click
+                        if (App_Operator.game_state === "Waiting") {
+                            // Create the numbers behind the grid
+                            App_Operator.first_click_position = parseInt(this.id);
+                            Board_Making.get_board_from_api(this.id);
+                            // Set timer
+                            App_Operator.game_state = "Playing";
+                            time_counter();
+                            //App_Operator.show(this.id);
+                            $(".hoverable").addClass("first_click");
+                            $(".hoverable").removeClass("hoverable");
+
+                        } else {
+                            App_Operator.handle_middle_click(parseInt(this.id));
+                            App_Operator.expand_all_empty_squares(this.id);
+
+                            App_Operator.update_state();
+                            App_Operator.update_state_for_Square_class();
+                        }
+
+                        if (App_Operator.is_lose()) {
+                            App_Operator.game_state = "Lose";
+                        }
+                        App_Operator.is_win();
+
+                        App_Operator.active_undo_button();
+
+                    }
+                } catch (err) {
+                    
+                }
+                break;
+            case 3:
+                event.preventDefault();
+                //$(this).toggleClass("flag_on");
+                try {
+                    if ($(".hoverable").attr("class").includes("first_click")) {
+
+                    } else {
+                        // Handle when first click
+                        if (App_Operator.game_state === "Waiting") {
+                            alert("You don't need to put a flag now!");
+                        } else {
+                            if ($(this).attr("class").includes("active")) {
+
+                            } else {
+                                $(this).toggleClass("flag_on");
+                                App_Operator.update_state();
+                                App_Operator.update_state_for_Square_class();
+                            }
+                        }
+
+                        if (App_Operator.is_lose()) {
+                            App_Operator.game_state = "Lose";
+                        }
+                        App_Operator.is_win();
+                        App_Operator.active_undo_button();
+                    }
+                } catch (err) {
+
+                }
+                break;
+        }
+    });
+</script>
+
+</html>
