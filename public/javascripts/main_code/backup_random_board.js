@@ -1,102 +1,3 @@
-var express = require('express');
-var router = express.Router();
-
-
-const fs = require('fs');
-
-/* GET home page. */
-/*router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});*/
-
-
-router.get('/', function (req, res, next) {
-    res.render('../views/index');
-});
-
-router.get('/settings', function (req, res, next) {
-    res.render('../views/settings');
-});
-
-router.get('/game', function (req, res, next) {
-    //res.render('../views/game');
-    let data = readFile();
-
-    res.render('../views/game', {
-        number_of_squares_a_row: data.info_json.chosen_row_length,
-        number_of_squares_a_column: data.info_json.chosen_column_length,
-        number_of_bombs: data.info_json.chosen_bomb_number,
-        name: data.info_json.chosen_name,
-        is_need_publish_score: data.info_json.is_need_publish_score
-    });
-
-});
-
-router.get('/get_leaderboard', function (req, res, next) {
-    //res.render('../views/game');
-    let data = readFile_2();
-
-    /*res.render('../views/game', {
-      number_of_squares_a_row: data.info_json.chosen_row_length,
-      number_of_squares_a_column: data.info_json.chosen_column_length,
-      number_of_bombs: data.info_json.chosen_bomb_number,
-      name: data.info_json.chosen_name,
-      is_need_publish_score: data.info_json.is_need_publish_score
-    });*/
-
-    res.json(data);
-
-});
-
-// Main URL here!
-router.get('/getBoardBackUp/:position/:bomb_number/:row_length/:column_length', function (req, res, next) {
-    res.json(backup_create_board(req.params.position, req.params.bomb_number, req.params.row_length, req.params.column_length));   
-});
-
-router.post('/game_request', function (req, res, next) {
-    //Write file
-    let data = JSON.stringify(req.body);
-    fs.writeFileSync('temp_data_board.json', data);
-
-    res.end();
-});
-
-router.post('/leaderboard', function (req, res, next) {
-    // Pull old files
-    let old_data = readFile_2();
-    let new_data = req.body.info_json;
-
-    let full_data = old_data;
-    full_data.push(new_data);
-
-    fs.writeFileSync('leaderboard.json', JSON.stringify(full_data));
-    res.end();
-});
-
-module.exports = router;
-
-//////////////////////////////////////////////////// Function Support //////////////////////////////////////////////
-function readFile() {
-    let rawdata = fs.readFileSync('temp_data_board.json');
-
-    let data = JSON.parse(rawdata);
-
-    /*let file = "";
-    fs.writeFileSync('temp_data_board.json', file);*/
-    return data;
-}
-
-function readFile_2() {
-    let rawdata = fs.readFileSync('leaderboard.json');
-
-    let data = JSON.parse(rawdata);
-
-    return data;
-}
-
-
-
-////////////////////////////////////////// Backup part ////////////////////////////////////////
 class RelativeSquares {
     constructor(position, number_of_squares_a_row, number_of_squares_a_column) {
         // Convert string to int to make sure the calculation right
@@ -126,11 +27,11 @@ class RelativeSquares {
 
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
-                if (this.x + i < 0 || this.x + i >= this.number_of_squares_a_row) {
+                if (this.x + i < 0 || this.x + i >= this.number_of_squares_a_row){
                     // Skip code
-                } else if (this.y + j < 0 || this.y + j >= this.number_of_squares_a_column) {
+                }else if (this.y + j < 0 || this.y + j >= this.number_of_squares_a_column){
                     // Skip code
-                } else {
+                }else{
                     positions.push(this.convert_2d_to_1d_position(this.x + i, this.y + j));
                 }
             }
@@ -205,10 +106,10 @@ class BombExceptFirstClick extends Bomb {
         let relative_squares_exception =
             new RelativeSquares(this.first_click_position, this.number_of_squares_a_row, this.number_of_squares_a_column);
         relative_squares_exception = relative_squares_exception.get_3x3_area_position();
-
-        for (let i = 0; i < relative_squares_exception.length; i++) {
-            this.exception.push(relative_squares_exception[i]);
-        }
+        
+            for(let i=0; i<relative_squares_exception.length; i++){
+                this.exception.push(relative_squares_exception[i]);
+            }
 
     }
 
@@ -216,7 +117,7 @@ class BombExceptFirstClick extends Bomb {
     // Override the main function
     // Main function to create bombs' position
     create_bombs() {
-        this.add_surrounding_first_click_into_exception(); // Override part
+        this.add_surrounding_first_click_into_exception();          // Override part
 
         for (let i = 0; i < this.number_of_bombs; i++) {
             let temp_position = this.get_random_position();
@@ -325,3 +226,4 @@ function backup_create_board(position, bomb_numbers, number_of_squares_a_row, nu
 
     return m.board_map;
 }
+
